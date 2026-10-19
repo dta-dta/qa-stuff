@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artikelnummer & Stückzahl</title>
+  <style>
+    :root {
+      --bg: #02040a;
+      --panel: #0a101c;
+      --panel-soft: #0d1524;
+      --field: #060b14;
+      --text: #f8fafc;
+      --muted: #8b98aa;
+      --border: #1d2939;
+      --border-strong: #334155;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-soft: rgba(99, 102, 241, .12);
+      --success: #6ee7b7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(79, 70, 229, .10), transparent 26%),
+        linear-gradient(180deg, #02040a 0%, #050914 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 52px 0 64px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #c7d2fe;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .back-link:hover { color: #fff; }
+
+    .badge {
+      padding: 7px 10px;
+      border: 1px solid rgba(99, 102, 241, .22);
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #c7d2fe;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(10, 16, 28, .99), rgba(7, 12, 22, .99));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.38);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4vw, 40px);
+      letter-spacing: -.035em;
+    }
+
+    .intro {
+      max-width: 760px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin: 0 0 9px;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 250px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: var(--field);
+      color: var(--text);
+      font-size: 14px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      line-height: 1.55;
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    textarea::placeholder { color: #4b5563; }
+
+    textarea:focus {
+      border-color: rgba(99, 102, 241, .68);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .10);
+      background: #070d17;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .primary:hover { background: var(--accent-hover); }
+
+    .secondary {
+      background: #101827;
+      color: #dbe4f0;
+      border-color: var(--border);
+    }
+
+    .secondary:hover {
+      background: #152033;
+      border-color: var(--border-strong);
+    }
+
+    .success {
+      color: var(--success);
+      font-size: 14px;
+      min-height: 20px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .pane {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, .08);
+      border-radius: 14px;
+      background: rgba(13, 21, 36, .42);
+    }
+
+    .hint {
+      background: #080e18;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.55;
+    }
+
+    .hint code { color: #c7d2fe; }
+
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .wrap { width: min(100% - 24px, 1040px); padding: 28px 0 40px; }
+      .card { padding: 20px; }
+      .topbar { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back-link" href="index.html">← Zurück zu QA Stuff</a>
+      <div class="badge">QA Tool</div>
+    </div>
+
+    <div class="card">
+      <h1>Artikelnummer + Stückzahl</h1>
+      <p class="intro">
+        Füge deine komplette Artikelliste ein. Das Tool nimmt aus jeder Zeile
+        die Artikelnummer am Anfang und die Stückzahl direkt nach der Beschreibung.
+      </p>
+
+      <div class="grid">
+        <div class="pane">
+          <label for="input">Daten einfügen</label>
+          <textarea id="input" placeholder="TEST-0000-0001 Artikel    50    4,80 €    240,00 €    test
+TEST-0000-0002    Laptop Backpack    70    39,80 €    2.786,00 €    test"></textarea>
+
+          <div class="buttons">
+            <button class="primary" onclick="convertData()">Umwandeln</button>
+            <button class="secondary" onclick="clearAll()">Leeren</button>
+          </div>
+
+          <div class="hint">
+            Ausgabe z. B.:<br>
+            <code>TEST-0000-4344=50</code><br>
+            <code>TEST-0000-7982=70</code>
+          </div>
+        </div>
+
+        <div class="pane">
+          <label for="output">Ergebnis</label>
+          <textarea id="output" readonly></textarea>
+
+          <div class="buttons">
+            <button class="primary" onclick="copyResult()">Ergebnis kopieren</button>
+          </div>
+
+          <div id="status" class="success"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function parseLine(line) {
+      line = line.trim();
+      if (!line) return null;
+
+      // Bevorzugt Tabs oder mehrere Leerzeichen als Spaltentrenner.
+      let cols = line.split(/\t+|\s{2,}/).map(x => x.trim()).filter(Boolean);
+
+      if (cols.length >= 3) {
+        const article = cols[0];
+
+        // Die Stückzahl ist die erste reine Ganzzahl nach der Artikelbeschreibung.
+        for (let i = 1; i < cols.length; i++) {
+          if (/^\d+$/.test(cols[i])) {
+            return { article, qty: cols[i] };
+          }
+        }
+      }
+
+      // Fallback für Zeilen mit einfachen Leerzeichen:
+      // Artikelnummer am Anfang + erste Ganzzahl, auf die später Preisfelder folgen.
+      const articleMatch = line.match(/^(\S+)/);
+      if (!articleMatch) return null;
+
+      const article = articleMatch[1];
+      const rest = line.slice(article.length).trim();
+
+      // Sucht eine Ganzzahl vor einem typischen Preis wie 4,80 € / 39,80 €
+      const qtyMatch = rest.match(/(?:^|\s)(\d+)(?=\s+\d{1,3}(?:\.\d{3})*,\d{2}\s*€)/);
+
+      if (qtyMatch) {
+        return { article, qty: qtyMatch[1] };
+      }
+
+      return null;
+    }
+
+    function convertData() {
+      const input = document.getElementById('input').value;
+      const lines = input.split(/\r?\n/);
+      const result = [];
+
+      for (const line of lines) {
+        const parsed = parseLine(line);
+        if (parsed) result.push(`${parsed.article}=${parsed.qty}`);
+      }
+
+      document.getElementById('output').value = result.join('\n');
+      document.getElementById('status').textContent = `${result.length} Artikel erkannt.`;
+    }
+
+    async function copyResult() {
+      const output = document.getElementById('output');
+      if (!output.value) return;
+
+      try {
+        await navigator.clipboard.writeText(output.value);
+        document.getElementById('status').textContent = 'Ergebnis kopiert.';
+      } catch {
+        output.select();
+        document.execCommand('copy');
+        document.getElementById('status').textContent = 'Ergebnis kopiert.';
+      }
+    }
+
+    function clearAll() {
+      document.getElementById('input').value = '';
+      document.getElementById('output').value = '';
+      document.getElementById('status').textContent = '';
+    }
+
+    document.getElementById('input').addEventListener('input', convertData);
+  </script>
+</body>
+</html>
